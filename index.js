@@ -126,7 +126,7 @@ module.exports = function(nforce, pluginName) {
     }
 
     uri += endPoint;
-    console.log(uri);
+
     return uri;
   }
 
