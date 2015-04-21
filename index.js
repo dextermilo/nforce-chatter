@@ -12,8 +12,7 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/users/' + args.id;
+    opts.uri = buildUri('/chatter/users/' + args.id, this.apiVersion, opts);
     opts.method = 'GET';
     return this._apiRequest(opts, opts.callback);
   });
@@ -21,8 +20,7 @@ module.exports = function(nforce, pluginName) {
   // http://www.salesforce.com/us/developer/docs/chatterapi/Content/quickreference_get_news_feed.htm
   plugin.fn('myNewsFeed', function(args, callback) {
     var opts = this._getOpts(args, callback);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feeds/record/me/feed-elements';
+    opts.uri = buildUri('/chatter/feeds/record/me/feed-elements', this.apiVersion, opts);
     opts.method = 'GET';
     return this._apiRequest(opts, opts.callback);
   });
@@ -32,8 +30,7 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feeds/record/' + args.id + '/feed-elements';
+    opts.uri = buildUri('/chatter/feeds/record/' + args.id + '/feed-elements', this.apiVersion, opts);
     opts.method = 'GET';
     return this._apiRequest(opts, opts.callback);
   });
@@ -43,8 +40,7 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feeds/record/' + args.id + '/feed-elements';
+    opts.uri = buildUri('/chatter/feeds/record/' + args.id + '/feed-elements', this.apiVersion, opts);
     opts.method = 'GET';
     return this._apiRequest(opts, opts.callback);
   });
@@ -54,8 +50,10 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id', 'text']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feed-elements/' + args.id + '/capabilities/comments/items';
+    opts.uri = buildUri(
+      '/chatter/feed-elements/' + args.id + '/capabilities/comments/items',
+      this.apiVersion,
+      opts);
     opts.method = 'POST';
     var body = {
       "body":
@@ -72,8 +70,10 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feed-elements/' + args.id + '/capabilities/chatter-likes/items';
+    opts.uri = buildUri(
+      '/chatter/feed-elements/' + args.id + '/capabilities/chatter-likes/items',
+      this.apiVersion,
+      opts);
     opts.method = 'POST';
     return this._apiRequest(opts, opts.callback);
   });
@@ -83,8 +83,7 @@ module.exports = function(nforce, pluginName) {
     var validator = validate(args, ['id', 'text']);
     var opts = this._getOpts(args, callback);
     if (validator.error) return callback(new Error(validator.message), null);
-    opts.uri = opts.oauth.instance_url + '/services/data/' + this.apiVersion
-        + '/chatter/feed-elements';
+    opts.uri = buildUri('/chatter/feed-elements', this.apiVersion, opts);
     var body = {
       "body":
         { "messageSegments":
@@ -116,6 +115,19 @@ module.exports = function(nforce, pluginName) {
       })
     }
     return result;
+  }
+
+  // utility method to construct the uri
+  function buildUri(endPoint, apiVersion, opts) {
+    var uri = opts.oauth.instance_url + '/services/data/' + apiVersion;
+
+    if (opts.networkId) {
+      uri += '/connect/communities/' + opts.networkId;
+    }
+
+    uri += endPoint;
+    console.log(uri);
+    return uri;
   }
 
 }

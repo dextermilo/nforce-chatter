@@ -7,6 +7,7 @@ var org = nforce.createConnection({
   clientId: config.connection.clientId,
   clientSecret: config.connection.clientSecret,
   redirectUri: config.connection.redirectUri,
+  environment: config.connection.environment || 'production',
   mode: 'single',
   plugins: ['chatter']
 });
